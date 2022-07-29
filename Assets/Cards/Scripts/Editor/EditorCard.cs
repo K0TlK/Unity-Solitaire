@@ -1,13 +1,11 @@
 using UnityEngine;
 using UnityEditor;
-using Cards;
 
 namespace Cards
 {
     [CustomEditor(typeof(Card))]
     public class EditorCard : Editor
     {
-
         public override void OnInspectorGUI()
         {
             DrawDefaultInspector();

@@ -6,6 +6,13 @@ namespace Cards
 {
     public class Card : MonoBehaviour
     {
+        public enum CardActive
+        {
+            TRUE,
+            FALSE
+
+        };
+
         public enum CardState
         {
             UNLOCK,

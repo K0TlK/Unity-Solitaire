@@ -152,6 +152,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 712fd54d8019baf43b1d78057640416e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_field: {fileID: 963549324}
+  m_deck: {fileID: 963549325}
+  m_cards: []
 --- !u!4 &375312918
 Transform:
   m_ObjectHideFlags: 0
@@ -205,7 +208,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea8d8b8548712374bb7d154ec981d470, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_rayDistance: 20
+  m_rayDistance: 55
   m_camera: {fileID: 519420031}
   dragTarget: {fileID: 0}
 --- !u!20 &519420031
@@ -259,7 +262,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 519420028}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -10}
+  m_LocalPosition: {x: 0, y: 0, z: -53}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -425,7 +428,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963549321}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.6351979, y: -0.04160548, z: -0.36266452}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -445,7 +448,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_cardPrefab: {fileID: 5847946734771953781, guid: ff3c44bf156908e4a90754d82d22246c, type: 3}
   m_creationPoint: {fileID: 963549323}
-  m_cardSpriteManager: {fileID: 0}
+  m_cardSpriteManager: {fileID: 963549322}
 --- !u!114 &963549325
 MonoBehaviour:
   m_ObjectHideFlags: 0

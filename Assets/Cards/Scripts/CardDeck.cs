@@ -11,10 +11,8 @@ namespace Cards
     {
         [SerializeField] private FieldController m_fieldController;
 
-        private void Start()
+        private void Awake()
         {
-            CreateNewDeck(CardDeckType.TYPE52);
-
             if (m_fieldController == null)
             {
                 m_fieldController.GetComponent<FieldController>();
@@ -52,12 +50,14 @@ namespace Cards
 
             int CardCounter = 0;
 
+
             for (Card.CardSuit cardSuit = Card.CardSuit.HEARTS; cardSuit <= Card.CardSuit.SPADES; cardSuit++)
             {
                 for (Card.CardName cardName = start; cardName <= end; cardName++)
                 {
                     CardCounter++;
                     m_fieldController.AddCard(cardName, cardSuit);
+
                     logOutput.AppendLine($"{CardCounter}) New card: {cardSuit} of {cardName}");
                 }
             }

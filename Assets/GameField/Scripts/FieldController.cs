@@ -11,7 +11,7 @@ namespace GameField
         [SerializeField] private Transform m_creationPoint;
         [SerializeField] private CardSpriteManager m_cardSpriteManager;
         private CardDeck m_deck;
-        private Stack<CardController> m_cards = new Stack<CardController>();
+        private List<CardController> m_cards = new List<CardController>();
 
         void Start()
         {
@@ -26,10 +26,11 @@ namespace GameField
             }
         }
 
-        public void AddCard(Card.CardName name, Card.CardSuit suit)
+        public CardController AddCard(Card.CardName name, Card.CardSuit suit)
         {
-            m_cards.Push(Instantiate(m_cardPrefab, m_creationPoint));
-            m_cards.Pop().SetVisual(name, suit);
+            m_cards.Add(Instantiate(m_cardPrefab, m_creationPoint));
+            m_cards[m_cards.Count - 1].SetVisual(name, suit);
+            return m_cards[m_cards.Count - 1];
         }
 
         public void Clear()
@@ -38,7 +39,7 @@ namespace GameField
             {
                 Destroy(card);
             }
-            m_cards = new Stack<CardController>();
+            m_cards.Clear();
         }
     }
 }

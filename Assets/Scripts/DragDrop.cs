@@ -1,3 +1,4 @@
+using Cards;
 using System;
 using System.Text;
 using UnityEngine;
@@ -16,6 +17,7 @@ public class DragDrop : MonoBehaviour
     private int m_drugCount = 0;
 
     private Vector3 m_oldPos;
+    private Transform m_cardTarget;
 
     private void Start()
     {
@@ -60,28 +62,45 @@ public class DragDrop : MonoBehaviour
     private void OnDrugStart()
     {
         m_drugCount = 0;
-        m_oldPos = Input.mousePosition;
+        m_oldPos = Vector3.zero;
+        m_cardTarget = null;
+        Cursor.lockState = CursorLockMode.Confined;
         debugOutput.AppendLine($"{DateTime.Now} | OnDrugStart");
     }
 
     private void OnDrug()
     {
+        if (m_oldPos == Input.mousePosition)
+        {
+            return;
+        }
+
         m_drugCount++;
-        drawRay();
+
+        if (m_cardTarget == null)
+        {
+            GetTarget();
+        }
+        else
+        {
+            DrugCard();
+        }
+
+        m_oldPos = Input.mousePosition;
     }
 
     private void OnDrugEnd()
     {
-        debugOutput.AppendLine($"OnDrug: {m_drugCount}");
+        Cursor.lockState = CursorLockMode.None;
+        debugOutput.AppendLine($"OnDrug: {m_drugCount} updates");
         debugOutput.AppendLine($"{DateTime.Now} | OnDrugEnd");
         Debug.Log(debugOutput.ToString());
         debugOutput.Clear();
     }
 
-    void drawRay()
+    private void GetTarget()
     {
         Vector3 camPosition = m_camera.transform.localPosition;
-        Vector3 mousez = m_camera.WorldToScreenPoint(new Vector3(0, 0, Input.mousePosition.z));
         Vector3 origin = m_camera.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, m_rayDistance));
         Vector3 direction = new Vector3(0, 0, camPosition.z);
 
@@ -89,15 +108,30 @@ public class DragDrop : MonoBehaviour
 
         RaycastHit2D[] hits = Physics2D.RaycastAll(origin, direction, m_rayDistance);
 
-        StringBuilder stringBuilder = new StringBuilder();
-        foreach (RaycastHit2D hit in hits)
+        foreach (RaycastHit2D obj in hits)
         {
-            stringBuilder.AppendLine(hit.collider.gameObject.name);
+            if (obj.transform.tag.Contains("Card"))
+            {
+                debugOutput.AppendLine("Raycast find card: " + obj.collider.gameObject.name);
+                m_cardTarget = obj.collider.transform;
+                m_cardTarget.GetComponent<CardController>().UnlockCard();
+                break;
+            }
         }
 
-        if (stringBuilder.Length != 0)
-        { 
-            Debug.Log(stringBuilder.ToString());
-        }
+        debugOutput.AppendLine($"{DateTime.Now} | Raycast can't find card");
+    }
+
+    private void DrugCard()
+    {
+
+        Vector3 newPos = m_camera.ScreenToWorldPoint(new Vector3(
+            Input.mousePosition.x,
+            Input.mousePosition.y,
+            0));
+
+        newPos.z = m_cardTarget.position.z;
+
+        m_cardTarget.position = newPos;
     }
 }
