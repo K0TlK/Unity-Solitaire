@@ -44,6 +44,7 @@ namespace Cards
             m_card.Name = name;
             m_card.Suit = suit;
             m_card.State = state;
+            gameObject.name = $"{name}_{suit}";
             SetVisual();
         }
 
