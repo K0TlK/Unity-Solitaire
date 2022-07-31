@@ -1,42 +1,52 @@
 using GameField;
 using Cards;
 using UnityEngine;
+using System;
+using Random = UnityEngine.Random;
 
 public class GameController : MonoBehaviour
 {
     [SerializeField] private FieldController m_field;
     [SerializeField] private CardDeck m_deck;
-    [SerializeField] private CardController[] m_cards;
-    private float m_screenBorderOffset = 1.2f;
-    private float m_rowsOffset = -1f;
-    private int m_rows = 4;
 
-    private void Start()
-    {
-        StartGame();
-    }
+    [SerializeField] private CardPlace[] cardPlaces;
+    [SerializeField] private CardPlace m_bankPlace;
+    [SerializeField] private CardPlace m_activePlace;
+
+    private CardController[] m_cards;
+    private int[] m_cardIndex = new int[1];
 
     public void StartGame()
     {
-        m_deck.CreateNewDeck(CardDeck.CardDeckType.TYPE52);
+        Clear();
+        m_deck.CreateNewDeck(CardDeck.CardDeckType.SOLITAIRE50);
         m_cards = m_field.GetComponentsInChildren<CardController>();
+        CreateRandomIndex();
+        SetParents();
+        OpenLastCards();
+    }
 
-        int[] index = new int[m_cards.Length];
+    private void CreateRandomIndex()
+    {
+        m_cardIndex = new int[m_cards.Length];
 
-        for (int i = 0; i < index.Length; i++)
-            index[i] = i;
+        for (int i = 0; i < m_cardIndex.Length; i++)
+            m_cardIndex[i] = i;
 
-
-        int swap = 0;
-
-        for (int i = 0; i < index.Length; i++)
+        for (int i = 0; i < m_cardIndex.Length; i++)
         {
             int newIndex = Random.Range(0, m_cards.Length);
-            swap = index[newIndex];
-            index[newIndex] = index[i];
-            index[i] = swap;
+            int swap = m_cardIndex[newIndex];
+            m_cardIndex[newIndex] = m_cardIndex[i];
+            m_cardIndex[i] = swap;
         }
+    }
 
+    private void ShowCards()
+    {
+        const float m_screenBorderOffset = 1.2f;
+        const float m_rowsOffset = -1f;
+        const int m_rows = 4;
 
         Vector2 screen = GetScreen();
         screen.x -= m_screenBorderOffset;
@@ -48,8 +58,60 @@ public class GameController : MonoBehaviour
         {
             float posX = screenStep * (i % cardOnRow) - screen.x;
             float posY = (Mathf.Floor(i / cardOnRow) + 1) * m_rowsOffset;
-            m_cards[index[i]].SetNewPos(new Vector3(posX, posY, i * (-0.1f)));
+            m_cards[m_cardIndex[i]].SetNewPos(new Vector3(posX, posY, i * (-0.1f)));
         }
+    }
+
+    private void SetParents()
+    {
+        for (int i = 0; i < m_cards.Length - 1; i++)
+        {
+            if (m_cards[m_cardIndex[i]].additionalInformation == "bank")
+            {
+                m_bankPlace.setChild(m_cards[m_cardIndex[i]]);
+                continue;
+            }
+            else
+            {
+                int cardPlaceIndex = Convert.ToInt16(m_cards[m_cardIndex[i]].additionalInformation);
+                cardPlaces[cardPlaceIndex].setChild(m_cards[m_cardIndex[i]]);
+            }
+        }
+
+        m_activePlace.setChild(m_cards[m_cardIndex[m_cards.Length - 1]]);
+        m_cards[m_cardIndex[m_cards.Length - 1]].additionalInformation = "active";
+    }
+
+    private void OpenLastCards()
+    {
+        foreach (CardPlace cardPlace in cardPlaces)
+        {
+            cardPlace.OpenLast();
+        }
+        m_activePlace.OpenLast();
+    }
+
+    private void Clear()
+    {
+        if (m_cards == null)
+        {
+            return;
+        }
+
+        foreach (CardController card in m_cards)
+        {
+            Destroy(card.gameObject);
+        }
+
+        foreach (CardPlace cardPlace in cardPlaces)
+        {
+            cardPlace.Clear();
+        }
+
+        m_bankPlace.Clear();
+        m_activePlace.Clear();
+
+        m_cards = null;
     }
 
     private Vector2 GetScreen()
@@ -57,5 +119,11 @@ public class GameController : MonoBehaviour
         Camera camera = UnityEngine.Camera.main;
 
         return new Vector2(camera.orthographicSize * camera.aspect, camera.orthographicSize);
+    }
+
+
+    public int GetSizeOfCardPlace()
+    {
+        return cardPlaces.Length;
     }
 }

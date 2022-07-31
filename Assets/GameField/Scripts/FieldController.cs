@@ -7,6 +7,8 @@ namespace GameField
 {
     public class FieldController : MonoBehaviour
     {
+        public const string NonAdditionalInformation = "";
+
         [SerializeField] private CardController m_cardPrefab;
         [SerializeField] private Transform m_creationPoint;
         [SerializeField] private CardSpriteManager m_cardSpriteManager;
@@ -26,10 +28,12 @@ namespace GameField
             }
         }
 
-        public CardController AddCard(Card.CardName name, Card.CardSuit suit)
+        public CardController AddCard(Card.CardName name, Card.CardSuit suit, string additionalInformation = NonAdditionalInformation)
         {
             m_cards.Add(Instantiate(m_cardPrefab, m_creationPoint));
             m_cards[m_cards.Count - 1].SetVisual(name, suit);
+            m_cards[m_cards.Count - 1].additionalInformation = additionalInformation;
+
             return m_cards[m_cards.Count - 1];
         }
 

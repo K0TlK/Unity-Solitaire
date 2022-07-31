@@ -12,12 +12,12 @@ namespace Cards
         /// <summary>
         /// Play this anim, when user take stack cards
         /// </summary>
-        public void OnTake();
+        public void OnTake(float offset = 0);
 
         /// <summary>
         /// Play this anim, when user put stack cards
         /// </summary>
-        public void OnPut();
+        public void OnPut(float offset = 0);
 
         /// <summary>
         /// Card flip animation. As a result, The card will be face up.
@@ -34,6 +34,11 @@ namespace Cards
         /// </summary>
         /// <param name="newpos">New position</param>
         public void OnNewPos(Vector3 newpos);
+
+        /// <summary>
+        /// Stop animation
+        /// </summary>
+        public void StopAnim();
     }
 
 }

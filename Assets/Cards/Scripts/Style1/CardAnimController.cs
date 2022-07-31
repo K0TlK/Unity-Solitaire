@@ -10,10 +10,9 @@ namespace Cards
         [SerializeField] Transform m_back;
         [SerializeField] Transform m_top;
 
-        private float m_cardOffset = -1f;
-        private float m_onPut = -0.3f;
-        private float m_onTake = -0.7f;
-        private float m_animSpeed = 1f;
+        private const float m_cardOffset = -0.5f;
+        private const float m_onPut = -0.7f;
+        private const float m_animSpeed = 1f;
 
         private void Start()
         {
@@ -26,36 +25,32 @@ namespace Cards
 
         public void OnFirstTake()
         {
-            sequence.Complete();
-            sequence = DOTween.Sequence();
+            OnAnimStart();
             sequence.Append(transform.DOScale(new Vector3(1.2f, 1.2f), m_animSpeed / 2));
         }
 
-        public void OnTake()
+        public void OnTake(float offset = 0)
         {
-            sequence.Complete();
-            sequence = DOTween.Sequence();
-            sequence.Append(transform.DOLocalMove(new Vector3(0, m_cardOffset, m_onTake), m_animSpeed / 2));
+            OnAnimStart();
+            sequence.Append(transform.DOLocalMove(new Vector3(0, 0, 0), m_animSpeed / 2));
         }
 
-        public void OnPut()
+        public void OnPut(float offset = 0)
         {
-            sequence.Complete();
-            sequence = DOTween.Sequence();
-            sequence.Append(transform.DOLocalMove(new Vector3(0, m_cardOffset, m_onPut), m_animSpeed / 2));
+            OnAnimStart();
+            sequence.Append(transform.DOLocalMove(new Vector3(0, m_onPut * offset, m_cardOffset * offset), m_animSpeed / 2));
         }
 
 
         public void OnUnlock()
         {
+            OnAnimStart();
             m_back.gameObject.SetActive(true);
             m_top.gameObject.SetActive(true);
 
             m_back.localScale = new Vector3(1f, 1f, 1f);
             m_top.localScale = new Vector3(0f, 1f, 1f);
 
-            sequence.Complete();
-            sequence = DOTween.Sequence();
             sequence.Append(m_back.DOScale(new Vector3(0f, 1f, 1f), m_animSpeed / 2));
             sequence.Append(m_top.DOScale(new Vector3(1f, 1f, 1f), m_animSpeed / 2));
             sequence.AppendCallback(() =>
@@ -66,14 +61,14 @@ namespace Cards
 
         public void OnLock()
         {
+            OnAnimStart();
+
             m_back.gameObject.SetActive(true);
             m_top.gameObject.SetActive(true);
 
             m_back.localScale = new Vector3(0f, 1f, 1f);
             m_top.localScale = new Vector3(1f, 1f, 1f);
 
-            sequence.Complete();
-            sequence = DOTween.Sequence();
             sequence.Append(m_top.DOScale(new Vector3(0f, 1f, 1f), m_animSpeed / 4));
             sequence.Append(m_back.DOScale(new Vector3(1f, 1f, 1f), m_animSpeed / 4));
             sequence.Append(m_back.DORotate(new Vector3(0f, 0f, -10f), m_animSpeed / 8));
@@ -86,19 +81,31 @@ namespace Cards
             });
         }
 
+        public void OnNewPos(Vector3 newpos)
+        {
+            OnAnimStart();
+            sequence.Append(transform.DOMove(newpos, m_animSpeed));
 
-        void OnDestroy()
+        }
+
+        private void OnAnimStart()
+        {
+            if (sequence == null || !sequence.IsActive())
+            {
+                sequence = DOTween.Sequence();
+            }
+        }
+
+        public void StopAnim()
         {
             sequence.Complete();
             sequence.Kill();
+            sequence = DOTween.Sequence();
         }
 
-        public void OnNewPos(Vector3 newpos)
+        private void OnDestroy()
         {
-            sequence.Complete();
-            sequence = DOTween.Sequence();
-            sequence.Append(transform.DOMove(newpos, m_animSpeed));
-
+            sequence.Kill();
         }
     }
 
