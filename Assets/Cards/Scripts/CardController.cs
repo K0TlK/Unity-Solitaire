@@ -65,7 +65,6 @@ namespace Cards
 
         public void LockCard()
         {
-            Debug.LogWarning($"{gameObject.name} lock");
             if (m_card.State == Card.CardState.UNLOCK)
             {
                 m_card.State = Card.CardState.LOCK;

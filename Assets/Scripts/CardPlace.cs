@@ -7,6 +7,13 @@ public class CardPlace : MonoBehaviour
 {
     [SerializeField] private string m_info = "";
     List<CardController> m_cards = new List<CardController>();
+    private bool m_isComplete = false;
+
+    public bool isComplete
+    {
+        get => m_isComplete;
+    }
+
     public int indexLastCard
     {
         get { return m_cards.Count - 1; }
@@ -38,6 +45,8 @@ public class CardPlace : MonoBehaviour
     {
         card.place.RemoveLast();
         card.place.OpenLast();
+        card.UnlockCard();
+        card.additionalInformation = m_info;
         m_cards[indexLastCard].LockCard();
         AddCard(card);
         card.PutCard(this);
@@ -45,6 +54,12 @@ public class CardPlace : MonoBehaviour
 
     private void RemoveLast()
     {
+        if (indexLastCard == 0)
+        {
+            m_isComplete = true;
+            Debug.Log($"Place {m_info} complete");
+            return;
+        }
         m_cards.RemoveAt(indexLastCard);
     }
 

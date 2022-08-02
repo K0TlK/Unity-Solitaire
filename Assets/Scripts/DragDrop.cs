@@ -103,85 +103,16 @@ public class DragDrop : MonoBehaviour
         if (m_cardTargetController != null)
         {
             m_cardTargetController2 = GetTarget();
-            
-            if (m_cardTargetController2 != null)
-            {
-                CheckingCardConnectivity();
-                m_cardTargetController.PutCard();
-                m_cardTargetController2.PutCard();
-            }
-            else
-            {
-                debugOutput.AppendLine("Can't find second card");
-            }
+            m_controller.MergingCards(m_cardTargetController, m_cardTargetController2);
             m_cardTargetController.PutCard();
         }
+        
 
         Cursor.lockState = CursorLockMode.None;
         debugOutput.AppendLine($"OnDrag: {m_dragCount} updates");
         debugOutput.AppendLine($"{DateTime.Now} | OnDragEnd");
         Debug.Log(debugOutput.ToString());
         debugOutput.Clear();
-    }
-
-    private void CheckingCardConnectivity()
-    {
-        debugOutput.AppendLine($"Start Checking Card Connectivity. 1[{m_cardTargetController.additionalInformation}] - 2[{m_cardTargetController2.additionalInformation}] = " +
-            $"{Mathf.Abs(m_cardTargetController2.Name - m_cardTargetController.Name).ToString()}");
-
-        bool flag = m_cardTargetController.additionalInformation == "active";
-        if (m_cardTargetController2.additionalInformation == "active")
-        {
-            flag = true;
-            CardController swap = m_cardTargetController;
-            m_cardTargetController = m_cardTargetController2;
-            m_cardTargetController2 = swap;
-        }
-
-        if (flag)
-        {
-            if (m_cardTargetController2.additionalInformation == "bank")
-            {
-                m_cardTargetController2.UnlockCard();
-                MergingCards();
-            }
-
-            if (m_cardTargetController2.additionalInformation != "active")
-            {
-                if (Mathf.Abs(m_cardTargetController2.Name - m_cardTargetController.Name) == 1)
-                {
-                    MergingCards();
-                }
-                else
-                {
-                    debugOutput.AppendLine($"Failed: [{m_cardTargetController2.Name}] - [{m_cardTargetController.Name}] = " +
-                        Mathf.Abs(m_cardTargetController2.Name - m_cardTargetController.Name).ToString());
-                    return;
-                }
-            }
-            else
-            {
-                debugOutput.AppendLine("Failed: Two Active Cards");
-                return;
-            }
-        }
-        else
-        {
-            debugOutput.AppendLine("Failed: No active cards");
-            return;
-        }
-    }
-
-    private void MergingCards()
-    {
-        if (m_cardTargetController2.additionalInformation == "active")
-        {
-            debugOutput.AppendLine("Two Active Card");
-            return;
-        }
-
-        m_cardTargetController.place.SetNewPlace(m_cardTargetController2);
-        string tmp = m_cardTargetController2.additionalInformation;
     }
 
     /// <summary>

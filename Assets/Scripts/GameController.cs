@@ -121,9 +121,79 @@ public class GameController : MonoBehaviour
         return new Vector2(camera.orthographicSize * camera.aspect, camera.orthographicSize);
     }
 
-
     public int GetSizeOfCardPlace()
     {
         return cardPlaces.Length;
+    }
+
+    public bool isCardOnActivePlace(CardController cardController)
+    {
+        return cardController.place == m_activePlace;
+    }
+
+    public bool isCardOnBankPlace(CardController cardController)
+    {
+        return cardController.place == m_bankPlace;
+    }
+
+    public bool isCardsCanMerging(CardController cardController1, CardController cardController2)
+    {
+        if (cardController1 == null || cardController2 == null)
+        {
+            return false;
+        }
+
+        if (isCardOnActivePlace(cardController1) && isCardOnActivePlace(cardController2))
+        {
+            return false;
+        }
+
+        if (!(isCardOnActivePlace(cardController1) || isCardOnActivePlace(cardController2)))
+        {
+            return false;
+        }
+
+        if (isCardOnBankPlace(cardController1) || isCardOnBankPlace(cardController2))
+        {
+            return true;
+        }
+        
+        return Mathf.Abs(cardController1.Name - cardController2.Name) == 1;
+    }
+
+    public void MergingCards(CardController cardController1, CardController cardController2)
+    {
+        if (isCardsCanMerging(cardController1, cardController2))
+        {
+            if (isCardOnActivePlace(cardController1))
+            {
+                m_activePlace.SetNewPlace(cardController2);
+            }
+            else
+            {
+                m_activePlace.SetNewPlace(cardController1);
+            }
+            cardController1.PutCard();
+            cardController2.PutCard();
+            WinTest();
+        }
+    }
+
+    private void WinTest()
+    {
+        bool flag = true;
+
+        foreach (CardPlace cardPlace in cardPlaces)
+        {
+            if (cardPlace.isComplete)
+            {
+                flag = false;
+            }
+        }
+
+        if (flag)
+        {
+            Debug.Log("You WIN!)");
+        }
     }
 }

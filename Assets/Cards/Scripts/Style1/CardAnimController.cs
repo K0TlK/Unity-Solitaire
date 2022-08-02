@@ -11,7 +11,7 @@ namespace Cards
         [SerializeField] Transform m_top;
 
         private const float m_cardOffset = -0.5f;
-        private const float m_onPut = -0.7f;
+        private const float m_onPut = -0.5f;
         private const float m_animSpeed = 1f;
 
         private void Start()
