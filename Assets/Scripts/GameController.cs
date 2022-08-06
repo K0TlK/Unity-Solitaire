@@ -176,6 +176,7 @@ public class GameController : MonoBehaviour
             cardController1.PutCard();
             cardController2.PutCard();
             WinTest();
+            LoseTest();
         }
     }
 
@@ -194,6 +195,29 @@ public class GameController : MonoBehaviour
         if (flag)
         {
             Debug.Log("You WIN!)");
+        }
+    }
+
+    private void LoseTest()
+    {
+        if (m_bankPlace.getLast() != null)
+        {
+            return;
+        }
+
+        bool flag = true;
+
+        foreach (CardPlace cardPlace in cardPlaces)
+        {
+            if (!isCardsCanMerging(m_activePlace.getLast(), cardPlace.getLast()))
+            {
+                flag = false;
+            }
+        }
+
+        if (flag)
+        {
+            Debug.Log("Game End");
         }
     }
 }

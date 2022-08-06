@@ -6,7 +6,7 @@ using UnityEngine;
 public class CardPlace : MonoBehaviour
 {
     [SerializeField] private string m_info = "";
-    List<CardController> m_cards = new List<CardController>();
+    private List<CardController> m_cards = new List<CardController>();
     private bool m_isComplete = false;
 
     public bool isComplete
@@ -66,5 +66,15 @@ public class CardPlace : MonoBehaviour
     public virtual void OpenLast()
     {
         m_cards[indexLastCard].UnlockCard();
+    }
+
+    public CardController getLast()
+    {
+        if (m_cards.Count == 0)
+        {
+            return null;
+        }
+
+        return m_cards[m_cards.Count - 1];
     }
 }

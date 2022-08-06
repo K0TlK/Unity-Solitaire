@@ -122,7 +122,28 @@ public class DragDrop : MonoBehaviour
     private CardController GetTarget()
     {
         Vector3 camPosition = m_camera.transform.localPosition;
-        Vector3 origin = m_camera.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, m_rayDistance));
+        Vector3 origin = Vector3.zero;
+
+#if UNITY_STANDALONE_WIN
+        origin = m_camera.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, m_rayDistance));
+#elif UNITY_ANDROID
+        if (Input.touchCount == 1)
+        {
+            origin = m_camera.ScreenToWorldPoint(new Vector3(Input.touches[0].position.x, Input.touches[0].position.y, m_rayDistance));
+        }
+        else
+        {
+            return null;
+        }
+
+#else
+        
+#endif
+        if (origin == Vector3.zero)
+        {
+            return null;
+        }
+
         Vector3 direction = new Vector3(0, 0, camPosition.z);
 
         Debug.DrawRay(origin, direction, Color.red);
